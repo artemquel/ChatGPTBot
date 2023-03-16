@@ -63,7 +63,6 @@ export class TelegramBot {
             });
 
             await ctx.reply('', {
-              parse_mode: 'Markdown',
               reply_markup: new Keyboard()
                 .resized(true)
                 .text(InlineCommand.CHANGE_TOKEN)
@@ -80,7 +79,7 @@ export class TelegramBot {
               },
             });
           }
-          await message.update(`${response.text} ✅`);
+          await message.update(`${response.text}\n✅`);
           user.parentMessageId = response.id;
         } catch (err) {
           if (

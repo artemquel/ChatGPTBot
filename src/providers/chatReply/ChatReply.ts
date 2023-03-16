@@ -32,6 +32,7 @@ export class ChatReply {
         this.chatId,
         this.messageId,
         this.pendingMessage,
+        { parse_mode: 'Markdown' },
       );
       this.pendingMessage = '';
       this.timeout = null;
