@@ -22,7 +22,7 @@ export class ChatReply {
   }
 
   public static async sendMessage(ctx: Context, text: string) {
-    const message = await ctx.reply(text);
+    const message = await ctx.reply(text, { parse_mode: 'Markdown' });
     return new ChatReply(ctx.api, message.chat.id, message.message_id);
   }
 
