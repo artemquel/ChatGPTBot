@@ -16,22 +16,26 @@ export class UserRequest {
   }
 
   public async handle() {
-    const UserModel = NestServices.getModel<IUserModel>(User.name);
-    this._user = await UserModel.getByTelegramId(
-      this.ctx.update.message.from.id,
-    );
+    try {
+      const UserModel = NestServices.getModel<IUserModel>(User.name);
+      this._user = await UserModel.getByTelegramId(
+        this.ctx.update.message.from.id,
+      );
 
-    if (!this.user.openAiToken) {
-      await this.startSetTokenFlow();
-    } else if (this.ctx.message.text === InlineCommand.CHANGE_TOKEN) {
-      await this.startChangeTokenFlow();
-    } else if (this.ctx.message.text === InlineCommand.RESET_CONTEXT) {
-      await this.startResetContextFlow();
-    } else {
-      await this.startChatGPTFlow();
+      if (!this.user.openAiToken) {
+        await this.startSetTokenFlow();
+      } else if (this.ctx.message.text === InlineCommand.CHANGE_TOKEN) {
+        await this.startChangeTokenFlow();
+      } else if (this.ctx.message.text === InlineCommand.RESET_CONTEXT) {
+        await this.startResetContextFlow();
+      } else {
+        await this.startChatGPTFlow();
+      }
+
+      await this.user.save();
+    } catch (err) {
+      this.logger.error(err);
     }
-
-    await this.user.save();
   }
 
   private async startChatGPTFlow() {
@@ -92,7 +96,7 @@ export class UserRequest {
 
         await this.ctx.reply('Некорректный API ключ. Попробуй еще раз.');
       } else {
-        this.logger.error(err);
+        throw err;
       }
     }
   }
